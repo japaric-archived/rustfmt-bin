@@ -81,7 +81,8 @@ deploy:
   provider: releases
   api_key:
     secure: KHKh49sMivn3GjDm9l4JryzPJpKkalcWbwaxJTWHPmeDFK8r2efDzT8Xl/ethxznfpy7DgnWhTzwBV21CN/y3Erq6uToZ4ReqSjI7gOFM353zu3Lb0ZGCxpXq0jKAMESGssmUVBrJNe5Dl7n6bng62F9JCaXGRq3l3LY/C4Yfmsg0IEHobXgYqdjM0BfvQwtJxmBkB6iFvZhjn38m+Z10VsF3ny50GzltNp37voZA8bNpXIGCXHjCOndZQigcvFiK0UIW49p084aNC8lAdeGaG1oy1xt/lRXE8a7CHJ1buAj3Bzv/FGHyxvnItuIpKX9xt/gy+X77jDvRmusiLit6JaNnLnVzsfQsVw0X09vTAXRv+yahalOVWuwtnVmbr3L5kI0tqqpqWNTSj0UvHptSFW2zsgkADh/QuoTGawcvezrisCY+myl7i88IjRctGr9C7HmbIszyFdz1xe+7cXThnQdGogi8r08Zm6DgfqCd7ZQijPOSD6tgD63WvKTv5+V+ZhNhlV3BEt873voNWxb3zhN90hdjjXOqxm8VkUBCvGB84syiumWkHmEOkE5qVZjSz8NYd0FB5+jaISfRTbyBmkEwdeBAamgMsd5vrhiNtqSDstDRHWG94b56wxbdjLGeGDH1qqRI8Jk2jVVOTYzxdDG7ZMw5Q6TOGnMglf4y7A=
-    file_glob: true
+
+  file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   # don't delete the target directory
   skip_cleanup: true
