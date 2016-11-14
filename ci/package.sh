@@ -13,7 +13,8 @@ run() {
             ;;
     esac
 
-    cp target/$TARGET/release/{cargo-fmt,rustfmt} $stage/
+    cp target/$TARGET/release/cargo-fmt $stage/
+    cp target/$TARGET/release/rustfmt $stage/
 
     cd $stage
     tar czf $src_dir/$CRATE_NAME-$TRAVIS_TAG-$TARGET.tar.gz *
