@@ -17,6 +17,7 @@ build: false
 
 test_script:
   - if [%APPVEYOR_REPO_TAG%]==[false] (
+      ( exit 0 )
     ) else (
       if [%RUST_VERSION%]==[%DEPLOY_VERSION%] (
         cargo rustc --manifest-path rustfmt/Cargo.toml --target %TARGET% --release --bin cargo-fmt -- -C lto &&
