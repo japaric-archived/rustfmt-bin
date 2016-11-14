@@ -11,6 +11,7 @@ environment:
     - TARGET: x86_64-pc-windows-msvc
 
 install:
+  - git submodule update --init --recursive
   - ps: ci\install.ps1
 
 build: false
