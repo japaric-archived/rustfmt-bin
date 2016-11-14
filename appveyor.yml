@@ -21,8 +21,10 @@ test_script:
       ( exit 0 )
     ) else (
       if [%RUST_VERSION%]==[%DEPLOY_VERSION%] (
-        cargo rustc --manifest-path rustfmt/Cargo.toml --target %TARGET% --release --bin cargo-fmt -- -C lto &&
-        cargo rustc --manifest-path rustfmt/Cargo.toml --target %TARGET% --release --bin rustfmt -- -C lto
+        cd rustfmt &&
+        cargo rustc --target %TARGET% --release --bin cargo-fmt -- -C lto &&
+        cargo rustc --target %TARGET% --release --bin rustfmt -- -C lto &&
+        cd ..
       )
     )
 

@@ -9,12 +9,13 @@ deploy_mode() {
         export CARGO_TARGET_DIR=$(pwd)/target
     fi
 
-    cargo rustc $flags --bin cargo-fmt -- -C lto
-    cargo rustc $flags --bin rustfmt -- -C lto
+    cd rustfmt
+    cargo rustc --target $TARGET --release --bin cargo-fmt -- -C lto
+    cargo rustc --target $TARGET --release --bin rustfmt -- -C lto
+    cd ..
 }
 
 run() {
-    flags="--manifest-path rustfmt/Cargo.toml --target $TARGET --release"
     if [ -z $TRAVIS_TAG ]; then
         test_mode
     else
