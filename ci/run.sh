@@ -17,7 +17,7 @@ run() {
     flags="--manifest-path rustfmt/Cargo.toml --target $TARGET --release"
     if [ -z $TRAVIS_TAG ]; then
         test_mode
-    elif [ $TRAVIS_RUST_VERSION = $DEPLOY_VERSION ]; then
+    else
         deploy_mode
     fi
 }
