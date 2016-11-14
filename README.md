@@ -1,7 +1,8 @@
 # `rustfmt-bin`
 
-> Binary releases of [rustfmt]
+> Nightly [binary releases] of [rustfmt]
 
+[binary release]: https://github.com/japaric/rustfmt-bin/releases
 [rustfmt]: https://github.com/rust-lang-nursery/rustfmt
 
 ## Targets
