@@ -2,6 +2,8 @@
 
 set -ex
 
+git pull
+
 ( cd rustfmt && git pull )
 
 test -z "$(git status -s)" || (
