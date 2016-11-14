@@ -1,0 +1,3 @@
+[submodule "rustfmt"]
+	path = rustfmt
+	url = git://github.com/rust-lang-nursery/rustfmt.git
