@@ -1,9 +1,9 @@
-cache: cargo
 dist: trusty
 language: rust
-rust: nightly
 services: docker
 sudo: required
+
+rust: nightly
 
 env:
   global:
@@ -12,86 +12,47 @@ env:
 
 matrix:
   include:
+    # Linux
+    - env: TARGET=i686-unknown-linux-gnu
+    - env: TARGET=i686-unknown-linux-musl
+    # - env: TARGET=x86_64-unknown-linux-gnu  # this is the default job
+    - env: TARGET=x86_64-unknown-linux-musl
+
     # OSX
     - env: TARGET=i686-apple-darwin
       os: osx
     - env: TARGET=x86_64-apple-darwin
       os: osx
 
-    # Linux
-    # - env: TARGET=aarch64-unknown-linux-gnu
-    # - env: TARGET=arm-unknown-linux-gnueabi
-    # - env: TARGET=arm-unknown-linux-gnueabihf
-    # - env: TARGET=arm-unknown-linux-musleabi
-    # - env: TARGET=arm-unknown-linux-musleabihf
-    # - env: TARGET=armv7-unknown-linux-gnueabihf
-    # - env: TARGET=armv7-unknown-linux-musleabihf
-    # - env: TARGET=i586-unknown-linux-gnu
-    - env: TARGET=i686-unknown-linux-gnu
-    - env: TARGET=i686-unknown-linux-musl
-    # - env: TARGET=mips-unknown-linux-gnu
-    # - env: TARGET=mips-unknown-linux-musl
-    # - env: TARGET=mips64-unknown-linux-gnuabi64
-    # - env: TARGET=mips64el-unknown-linux-gnuabi64
-    # - env: TARGET=mipsel-unknown-linux-gnu
-    # - env: TARGET=mipsel-unknown-linux-musl
-    # - env: TARGET=powerpc-unknown-linux-gnu
-    # - env: TARGET=powerpc64-unknown-linux-gnu
-    # - env: TARGET=powerpc64le-unknown-linux-gnu
-    # - env: TARGET=s390x-unknown-linux-gnu
-    # - env: TARGET=thumbv6m-none-eabi
-    # - env: TARGET=thumbv7em-none-eabi
-    # - env: TARGET=thumbv7em-none-eabihf
-    # - env: TARGET=thumbv7m-none-eabi
-    - env: TARGET=x86_64-unknown-linux-musl
+    # *BSD
+    - env: TARGET=i686-unknown-freebsd DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
 install:
-  # curl: `rustc` + Cargo
-  # rustup: `rust-src` or `rust-std`
-  - if [ $TRAVIS_TAG ]; then
-      curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $TRAVIS_RUST_VERSION;
-
-      source ~/.cargo/env;
-
-      case $TARGET in
-        x86_64-apple-darwin | x86_64-unknown-linux-gnu) ;;
-        thumbv*-none-eabi*) rustup component add rust-src ;;
-        *) rustup target add $TARGET;;
-      esac;
-    fi
-
-script:
-  # chmod: Travis can't cache files that are not readable by "others"
-  - if [ $TRAVIS_TAG ]; then
-      ( cd rustfmt && cargo generate-lockfile );
-
-      if [[ $TRAVIS_OS_NAME = linux ]]; then
-        sh ci/run-docker.sh $TARGET || exit 1;
-      else
-        sh ci/run.sh || exit 1;
-      fi;
-
-      chmod -R a+r $HOME/.cargo;
-    fi
+  - sh ci/install.sh
+  - source ~/.cargo/env || true
 
 before_deploy:
-  - sh ci/package.sh $TARGET
+  - sh ci/before_deploy.sh
 
 deploy:
-  provider: releases
   api_key:
     secure: KHKh49sMivn3GjDm9l4JryzPJpKkalcWbwaxJTWHPmeDFK8r2efDzT8Xl/ethxznfpy7DgnWhTzwBV21CN/y3Erq6uToZ4ReqSjI7gOFM353zu3Lb0ZGCxpXq0jKAMESGssmUVBrJNe5Dl7n6bng62F9JCaXGRq3l3LY/C4Yfmsg0IEHobXgYqdjM0BfvQwtJxmBkB6iFvZhjn38m+Z10VsF3ny50GzltNp37voZA8bNpXIGCXHjCOndZQigcvFiK0UIW49p084aNC8lAdeGaG1oy1xt/lRXE8a7CHJ1buAj3Bzv/FGHyxvnItuIpKX9xt/gy+X77jDvRmusiLit6JaNnLnVzsfQsVw0X09vTAXRv+yahalOVWuwtnVmbr3L5kI0tqqpqWNTSj0UvHptSFW2zsgkADh/QuoTGawcvezrisCY+myl7i88IjRctGr9C7HmbIszyFdz1xe+7cXThnQdGogi8r08Zm6DgfqCd7ZQijPOSD6tgD63WvKTv5+V+ZhNhlV3BEt873voNWxb3zhN90hdjjXOqxm8VkUBCvGB84syiumWkHmEOkE5qVZjSz8NYd0FB5+jaISfRTbyBmkEwdeBAamgMsd5vrhiNtqSDstDRHWG94b56wxbdjLGeGDH1qqRI8Jk2jVVOTYzxdDG7ZMw5Q6TOGnMglf4y7A=
-
   file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
-  # don't delete the target directory
-  skip_cleanup: true
   on:
+    condition: $TRAVIS_RUST_VERSION = nightly
     tags: true
+  provider: releases
+  skip_cleanup: true
+
+cache: cargo
+before_cache:
+  - chmod -R a+r $HOME/.cargo
 
 branches:
   only:
-    # Release tags
     - /^v\d+\.\d+\.\d+.*$/
     - auto
     - try

@@ -1,45 +1,44 @@
 environment:
   global:
-    CRATE_NAME: rustfmt
-    DEPLOY_VERSION: nightly
     RUST_VERSION: nightly
+    CRATE_NAME: rustfmt
+
   matrix:
-    - TARGET: i586-pc-windows-msvc
+    # MinGW
     - TARGET: i686-pc-windows-gnu
-    - TARGET: i686-pc-windows-msvc
     - TARGET: x86_64-pc-windows-gnu
+
+    # MSVC
+    - TARGET: i686-pc-windows-msvc
     - TARGET: x86_64-pc-windows-msvc
 
 install:
-  - git submodule update --init --recursive
-  - ps: ci\install.ps1
-
-build: false
-
-test_script:
-  - if [%APPVEYOR_REPO_TAG%]==[false] (
-      ( exit 0 )
-    ) else (
-      if [%RUST_VERSION%]==[%DEPLOY_VERSION%] (
-        cd rustfmt &&
-        cargo rustc --target %TARGET% --release --bin cargo-fmt -- -C lto &&
-        cargo rustc --target %TARGET% --release --bin rustfmt -- -C lto &&
-        cd ..
-      )
-    )
+  - ps: >-
+      If ($Env:TARGET -eq 'x86_64-pc-windows-gnu') {
+        $Env:PATH += ';C:\msys64\mingw64\bin'
+      } ElseIf ($Env:TARGET -eq 'i686-pc-windows-gnu') {
+        $Env:PATH += ';C:\msys64\mingw32\bin'
+      }
+  - curl -sSf -o rustup-init.exe https://win.rustup.rs/
+  - rustup-init.exe -y --default-host %TARGET% --default-toolchain %RUST_VERSION%
+  - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
+  - rustc -Vv
+  - cargo -V
 
 before_deploy:
-  - ps: ci\package.ps1
+  - cargo rustc --target %TARGET% --release --bin cargo-fmt -- -C lto
+  - cargo rustc --target %TARGET% --release --bin rustfmt -- -C lto
+  - ps: ci\before_deploy.ps1
 
 deploy:
-  description: 'Windows release'
   artifact: /.*\.zip/
   auth_token:
     secure: dRmstFq9p25R+YAZ2mWU/ghxQyOxfKEdhFjXXGjKzdWcoa0BodgAjV/VEDa0nTnA
-  provider: GitHub
+  description: ''
   on:
     RUST_VERSION: nightly
     appveyor_repo_tag: true
+  provider: GitHub
 
 cache:
   - C:\Users\appveyor\.cargo\registry
@@ -47,7 +46,6 @@ cache:
 
 branches:
   only:
-    # Release tags
     - /^v\d+\.\d+\.\d+.*$/
     - auto
     - try
@@ -55,3 +53,5 @@ branches:
 notifications:
   - provider: Email
     on_build_success: false
+
+build: false
