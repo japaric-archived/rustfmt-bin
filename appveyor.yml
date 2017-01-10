@@ -26,8 +26,8 @@ install:
   - cargo -V
 
 before_deploy:
-  - cargo rustc --target %TARGET% --release --bin cargo-fmt -- -C lto
-  - cargo rustc --target %TARGET% --release --bin rustfmt -- -C lto
+  - cargo rustc --bin cargo-fmt --manifest-path rustfmt/Cargo.toml --release --target %TARGET% -- -C lto
+  - cargo rustc --bin rustfmt --manifest-path rustfmt/Cargo.toml --release --target %TARGET% -- -C lto
   - ps: ci\before_deploy.ps1
 
 deploy:

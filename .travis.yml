@@ -33,6 +33,9 @@ install:
   - sh ci/install.sh
   - source ~/.cargo/env || true
 
+script:
+  - true
+
 before_deploy:
   - sh ci/before_deploy.sh
 

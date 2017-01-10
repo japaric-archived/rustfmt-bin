@@ -13,10 +13,20 @@ main() {
             ;;
     esac
 
-    cross rustc --bin cargo-fmt --target $TARGET --release -- -C lto
-    cross rustc --bin rustfmt --target $TARGET --release -- -C lto
+    cross rustc \
+          --bin cargo-fmt \
+          --manifest-path rustfmt/Cargo.toml \
+          --release \
+          --target $TARGET \
+          -- -C lto
+    cross rustc \
+          --bin rustfmt \
+          --manifest-path rustfmt/Cargo.toml \
+          --release \
+          --target $TARGET \
+          -- -C lto
 
-    cp target/$TARGET/release/{cargo-fmt,rustfmt} $stage/
+    cp rustfmt/target/$TARGET/release/{cargo-fmt,rustfmt} $stage/
 
     cd $stage
     tar czf $src/$CRATE_NAME-$TRAVIS_TAG-$TARGET.tar.gz *
