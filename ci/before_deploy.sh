@@ -26,7 +26,8 @@ main() {
           --target $TARGET \
           -- -C lto
 
-    cp rustfmt/target/$TARGET/release/{cargo-fmt,rustfmt} $stage/
+    cp rustfmt/target/$TARGET/release/cargo-fmt $stage/
+    cp rustfmt/target/$TARGET/release/rustfmt $stage/
 
     cd $stage
     tar czf $src/$CRATE_NAME-$TRAVIS_TAG-$TARGET.tar.gz *
