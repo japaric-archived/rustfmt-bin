@@ -1,3 +1,9 @@
+# Status
+
+This repository has been **DEPRECATED** if favor of the `rustfmt` component (`rustup component add rustfmt`).
+
+-- @japaric, 2018-12-08
+
 # `rustfmt-bin`
 
 > Nightly [binary releases][0] of [rustfmt][1]
